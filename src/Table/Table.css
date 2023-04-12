@@ -11,11 +11,15 @@ html {
     border-bottom: 1px solid lightgray;
   }
   
-  th {
+  th {  
     font-size: 24px;
     border-bottom: 1px solid lightgray;
     border-right: 1px solid lightgray;
     padding: 2px 4px;
+  }
+
+  td {
+    border: 1px solid gray;
   }
   
   tfoot {
@@ -26,3 +30,6 @@ html {
     font-weight: normal;
   }
   
+  div.canSort {
+    cursor: pointer;
+  }

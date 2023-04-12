@@ -1,144 +1,126 @@
 import {
-  flexRender, // 其實就是 flex box
-  getCoreRowModel, // 取得行的資料來渲染新表格
-  useReactTable, // 使用此 Hook 來掌握表格
+  ColumnOrderState,
+  SortingState,
+  getSortedRowModel,
+  flexRender, // flex box
+  getCoreRowModel, // 取得row並做成row model來渲染新表格
+  useReactTable, // 使用此 Hook 來控制表格
 } from "@tanstack/react-table";
 import React, { useState } from "react";
 import "./Table.css";
-import { columns } from "./columns";
-
-export type Person = {
-  firstName: string;
-  lastName: string;
-  age: number;
-  visits: number;
-  status: string;
-  progress: number;
-};
-
-const defaultData: Person[] = [
-  {
-    firstName: "tanner",
-    lastName: "linsley",
-    age: 24,
-    visits: 100,
-    status: "In Relationship",
-    progress: 50,
-  },
-  {
-    firstName: "tandy",
-    lastName: "miller",
-    age: 40,
-    visits: 40,
-    status: "Single",
-    progress: 80,
-  },
-  {
-    firstName: "joe",
-    lastName: "dirte",
-    age: 45,
-    visits: 20,
-    status: "Complicated",
-    progress: 10,
-  },
-];
+import { defaultColumns, makeData } from "./Data"; // 匯入columns、data type、data
+import { Link } from "react-router-dom";
+import { faker } from "@faker-js/faker";
 
 function Table() {
-  const [data, setData] = useState(() => [...defaultData]);
-  const [formInput, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    age: 0,
-    visits: 0,
-    status: "",
-    progress: 0,
-  });
-  const [rowSelection, setRowSelection] = useState({});
-  const rerender = React.useReducer(() => ({}), {})[1];
-
+  const [data, setData] = useState(() => makeData(10));    // 儲存makeData()做出的假資料
+  const [columns] = useState(() => [...defaultColumns]);    // 儲存從defaultColumns匯入的columns資訊
+  const [columnVisibility, setColumnVisibility] = useState({});    // state of columns show or not 
+  const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]);    // state of columns order
+  const [sorting, setSorting] = useState<SortingState>([]);    // state of row sort
+  const rerender = () => setData(() => makeData(10));
+  // 使用useReactTableD控制表格，參數至少要{data, columns}
   const table = useReactTable({
     data,
     columns,
-    state:{
-        rowSelection,
+    // 控制table的state
+    state: {
+      columnVisibility,    
+      columnOrder,
+      sorting,
     },
-    onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,    // control columns show or not (filter)
+    onColumnOrderChange: setColumnOrder,    // control columns order
+    onSortingChange: setSorting,    // sort row
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),    
+    debugTable: true,
+    debugHeaders: true,
+    debugColumns: true,
   });
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
-    setData([...data, formInput]);
+
+  
+  // 洗亂columns的順序
+  const randomizeColumns = () => {
+    table.setColumnOrder(
+      faker.helpers.shuffle(table.getAllLeafColumns().map((d) => d.id))
+    );
   };
 
   return (
     <div className="p-2">
-      <form onSubmit={handleSubmit}>
-        firstName
-        <input
-          type="text"
-          value={formInput.firstName}
-          onChange={(event) =>
-            setForm({ ...formInput, firstName: event.target.value })
-          }
-        />
-        lastName
-        <input
-          type="text"
-          value={formInput.lastName}
-          onChange={(event) =>
-            setForm({ ...formInput, lastName: event.target.value })
-          }
-        />
-        age
-        <input
-          type="number"
-          value={formInput.age}
-          onChange={(event) =>
-            setForm({ ...formInput, age: parseInt(event.target.value, 10) })
-          }
-        />
-        visits
-        <input
-          type="number"
-          value={formInput.visits}
-          onChange={(event) =>
-            setForm({ ...formInput, visits: parseInt(event.target.value, 10) })
-          }
-        />
-        status
-        <input
-          type="text"
-          value={formInput.status}
-          onChange={(event) =>
-            setForm({ ...formInput, status: event.target.value })
-          }
-        />
-        progress
-        <input
-          type="number"
-          value={formInput.progress}
-          onChange={(event) =>
-            setForm({
-              ...formInput,
-              progress: parseInt(event.target.value, 10),
-            })
-          }
-        />
-        <br />
-        <input type="submit" value="送出" />
-      </form>
+      <Link to="/v7">v7</Link>
+      <div style={{border:"1px solid", width:"120px"}}>
+        <div>
+          <label>
+            <input
+              {...{
+                style: {float: "left"},
+                type: "checkbox",
+                // 使所有columns的資料都可見or都不可見
+                checked: table.getIsAllColumnsVisible(),
+                onChange: table.getToggleAllColumnsVisibilityHandler(),
+              }}
+            />{" "}
+            Toggle All
+          </label>
+          <hr/>
+        </div>
+        {table.getAllLeafColumns().map((column) => {
+          return (
+            <div key={column.id} className="px-1">
+              <label>
+                <input
+                  {...{
+                    style: {float: "left"},
+                    type: "checkbox",
+                    checked: column.getIsVisible(),
+                    onChange: column.getToggleVisibilityHandler(),
+                  }}
+                />{" "}
+                {column.id}
+              </label>
+            </div>
+          );
+        })}
+      </div>
+      <div className="h-4" />
+      <div className="flex flex-wrap gap-2">
+        <button onClick={() => rerender()} className="border p-1">
+          Regenerate
+        </button>
+        <button onClick={() => randomizeColumns()} className="border p-1">
+          Shuffle Columns
+        </button>
+      </div>
+      <div className="h-4" />
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    : (
+                      <div
+                        {...{
+                          className: header.column.getCanSort()
+                            ? 'canSort'
+                            : '',
+                          onClick: header.column.getToggleSortingHandler(),
+                        }}
+                      >
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                        {{
+                          asc: ' 🔼',
+                          desc: ' 🔽',
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </div>
+                    )}
                 </th>
               ))}
             </tr>
@@ -159,7 +141,7 @@ function Table() {
           {table.getFooterGroups().map((footerGroup) => (
             <tr key={footerGroup.id}>
               {footerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th key={header.id} colSpan={header.colSpan}>
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -172,14 +154,6 @@ function Table() {
           ))}
         </tfoot>
       </table>
-      <div className="h-4" />
-      <button
-        style={{ float: "left" }}
-        onClick={() => rerender()}
-        className="border p-2"
-      >
-        Rerender
-      </button>
     </div>
   );
 }
