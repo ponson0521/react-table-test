@@ -1,5 +1,6 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { faker } from "@faker-js/faker";
+import IndeterminateCheckbox from "./IndeterminateCheckbox";
 
 // Data type
 export type Person = {
@@ -52,10 +53,35 @@ export function makeData(...lens: number[]) {
   };
 
   return makeDataLevel();
-};
+}
 
+// Columns 
 const columnHelper = createColumnHelper<Person>();
 export const defaultColumns = [
+  columnHelper.display({
+    id: "select",
+    header: ({ table }) => (
+      <IndeterminateCheckbox
+        {...{
+          checked: table.getIsAllRowsSelected(),
+          indeterminate: table.getIsSomeRowsSelected(),
+          onChange: table.getToggleAllRowsSelectedHandler(),
+        }}
+      />
+    ),
+    cell: ({ row }) => (
+      <div className="px-1">
+        <IndeterminateCheckbox
+          {...{
+            checked: row.getIsSelected(),
+            disabled: !row.getCanSelect(),
+            indeterminate: row.getIsSomeSelected(),
+            onChange: row.getToggleSelectedHandler(),
+          }}
+        />
+      </div>
+    ),
+  }),
   // .group()，Grouping Column，no sort、filter
   columnHelper.group({
     id: "Name",
