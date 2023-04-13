@@ -1,16 +1,7 @@
-html {
-    font-family: Arial, Helvetica, sans-serif;
-    font-size: 18px;
-  }
-  
   table {
     border: 1px solid rgb(0, 0, 0);
   }
-  
-  tbody {
-    border-bottom: 1px solid lightgray;
-  }
-  
+    
   th {  
     font-size: 24px;
     border-bottom: 1px solid lightgray;
@@ -19,7 +10,8 @@ html {
   }
 
   td {
-    border: 1px solid gray;
+    border-bottom: 1px solid lightgray;
+    border-right: 1px solid lightgray;
   }
   
   tfoot {
@@ -32,31 +24,5 @@ html {
   
   div.canSort {
     cursor: pointer;
-  }
-
-  .resizer {
-    left: 0;
-    top: 0;
-    height: 20px;
-    width: 5px;
-    background: rgba(0, 0, 0, 0.5);
-    cursor: col-resize;
-    user-select: none;
-    touch-action: none;
-  }
-  
-  .resizer.isResizing {
-    background: blue;
-    opacity: 1;
-  }
-  
-  @media (hover: hover) {
-    .resizer {
-      opacity: 0;
-    }
-  
-    *:hover > .resizer {
-      opacity: 1;
-    }
   }
   

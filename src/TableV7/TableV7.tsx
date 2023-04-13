@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTable, Column } from "react-table";
-import { Link } from "react-router-dom";
+import ProSidebar from "../Sidebar/Sidebar/ProSidebar";
 
 function TableV7() {
   interface Data {
@@ -46,8 +46,8 @@ function TableV7() {
     tableInstance;
 
   return (
-    <div>
-      <Link to="/">v8</Link>
+    <div style={{ display: "flex" }}>
+      <ProSidebar />
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => (
@@ -64,7 +64,9 @@ function TableV7() {
             return (
               <tr {...row.getRowProps()}>
                 {row.cells.map((cell) => {
-                  return <td {...cell.getCellProps()}>{cell.render("Cell")}</td>;
+                  return (
+                    <td {...cell.getCellProps()}>{cell.render("Cell")}</td>
+                  );
                 })}
               </tr>
             );

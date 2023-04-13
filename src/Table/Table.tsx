@@ -1,7 +1,6 @@
 import {
   ColumnOrderState,
   SortingState,
-  ColumnResizeMode,
   flexRender, // flex box
   getCoreRowModel, // 取得row並做成row model來渲染新表格
   Sorting,
@@ -13,10 +12,10 @@ import {
 import { useState } from "react";
 import "./Table.css";
 import { defaultColumns, makeData } from "./Data"; // 匯入columns、data type、data等table資料
-import { Link } from "react-router-dom";
 import { faker } from "@faker-js/faker";
 import Filter from "./Filter";
 import ShowColumns from "./ShowColumns";
+import ProSidebar from "../Sidebar/Sidebar/ProSidebar";
 
 function Table() {
   const [data, setData] = useState(() => makeData(100)); // 儲存makeData()做出的假資料
@@ -25,8 +24,6 @@ function Table() {
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]); // state of columns order
   const [sorting, setSorting] = useState<SortingState>([]); // state of row sort
   const [rowSelection, setRowSelection] = useState({}); // state of selected row
-  const [columnResizeMode, setColumnResizeMode] =
-    useState<ColumnResizeMode>("onChange"); // 2 mode，"onChange" or "onEnd"
 
   const rerender = () => setData(() => makeData(100));
 
@@ -34,7 +31,6 @@ function Table() {
   const table = useReactTable({
     data,
     columns,
-    columnResizeMode,
     // 控制table的state
     state: {
       columnVisibility,
@@ -64,155 +60,143 @@ function Table() {
     );
   };
 
-  console.log(columnVisibility);
-  console.log(columnOrder);
-  console.log(Sorting);
+  console.log(rowSelection);
 
   return (
-    <div>
-      <Link to="/v7">v7</Link>
-      <ShowColumns table={table} />
+    <div style={{ display: "flex" }}>
       <div>
+        <ProSidebar />
+        <ShowColumns table={table} />
         <button onClick={() => rerender()}>New data</button>
         <button onClick={() => randomizeColumns()}>Shuffle Columns</button>
       </div>
-      <table style={{width: table.getCenterTotalSize()}}>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  colSpan={header.colSpan}
-                  style={{ width: header.getSize() }}
-                >
-                  {header.isPlaceholder ? null : (
-                    <div>
-                      <div
-                        {...{
-                          className: header.column.getCanSort()
-                            ? "canSort"
-                            : "",
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
+      <div>
+        <table>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <th key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ? null : (
+                      <div>
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "canSort"
+                              : "",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                          {{
+                            asc: " 🔼",
+                            desc: " 🔽",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </div>
+                        {header.column.getCanFilter() ? (
+                          <div>
+                            <Filter column={header.column} table={table} />
+                          </div>
+                        ) : null}
+                      </div>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => (
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            {table.getFooterGroups().map((footerGroup) => (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <th key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.footer,
                           header.getContext()
                         )}
-                        {{
-                          asc: " 🔼",
-                          desc: " 🔽",
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </div>
-                      {header.column.getCanFilter() ? (
-                        <div>
-                          <Filter column={header.column} table={table} />
-                        </div>
-                      ) : null}
-                  <div
-                    {...{
-                      onMouseDown: header.getResizeHandler(),
-                      onTouchStart: header.getResizeHandler(),
-                      className: `resizer ${
-                        header.column.getIsResizing() ? 'isResizing' : ''
-                      }`
-                    }}
-                  />
-                    </div>
-                  )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <th key={header.id} colSpan={header.colSpan}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
-                      )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
-      </table>
-      {/* page select */}
-      <div className="page">
-        <button
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<<"}
-        </button>
-        <button
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {"<"}
-        </button>
-        <button
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {">"}
-        </button>
-        <button
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {">>"}
-        </button>
-        <span>
-          <div>
-            Page
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of{" "}
-              {table.getPageCount()}
-            </strong>
-          </div>
-        </span>
-        <span>
-          Go to page:
-          <input
-            type="number"
-            min={1}
-            defaultValue={table.getState().pagination.pageIndex + 1}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </tfoot>
+        </table>
+        {/* page select */}
+        <div className="page">
+          <button
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<<"}
+          </button>
+          <button
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {"<"}
+          </button>
+          <button
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {">"}
+          </button>
+          <button
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {">>"}
+          </button>
+          <span>
+            <div>
+              Page
+              <strong>
+                {table.getState().pagination.pageIndex + 1} of{" "}
+                {table.getPageCount()}
+              </strong>
+            </div>
+          </span>
+          <span>
+            Go to page:
+            <input
+              type="number"
+              min={1}
+              max={table.getPageCount()}
+              defaultValue={table.getState().pagination.pageIndex + 1}
+              onChange={(e) => {
+                const page = e.target.value ? Number(e.target.value) - 1 : 0;
+                table.setPageIndex(page);
+              }}
+            />
+          </span>
+          <select
+            value={table.getState().pagination.pageSize}
             onChange={(e) => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0;
-              table.setPageIndex(page);
+              table.setPageSize(Number(e.target.value));
             }}
-          />
-        </span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={(e) => {
-            table.setPageSize(Number(e.target.value));
-          }}
-        >
-          {[10, 20, 30, 40, 50].map((pageSize) => (
-            <option key={pageSize} value={pageSize}>
-              Show {pageSize}
-            </option>
-          ))}
-        </select>
+          >
+            {[10, 20, 30, 40, 50].map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                Show {pageSize}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
     </div>
   );
