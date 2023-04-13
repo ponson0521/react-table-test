@@ -1,6 +1,7 @@
 import {
   ColumnOrderState,
   SortingState,
+  ColumnResizeMode,
   flexRender, // flex box
   getCoreRowModel, // 取得row並做成row model來渲染新表格
   Sorting,
@@ -15,6 +16,7 @@ import { defaultColumns, makeData } from "./Data"; // 匯入columns、data type�
 import { Link } from "react-router-dom";
 import { faker } from "@faker-js/faker";
 import Filter from "./Filter";
+import ShowColumns from "./ShowColumns";
 
 function Table() {
   const [data, setData] = useState(() => makeData(100)); // 儲存makeData()做出的假資料
@@ -23,12 +25,16 @@ function Table() {
   const [columnOrder, setColumnOrder] = useState<ColumnOrderState>([]); // state of columns order
   const [sorting, setSorting] = useState<SortingState>([]); // state of row sort
   const [rowSelection, setRowSelection] = useState({}); // state of selected row
+  const [columnResizeMode, setColumnResizeMode] =
+    useState<ColumnResizeMode>("onChange"); // 2 mode，"onChange" or "onEnd"
+
   const rerender = () => setData(() => makeData(100));
 
   // 使用useReactTableD控制表格，參數至少要{data, columns}
   const table = useReactTable({
     data,
     columns,
+    columnResizeMode,
     // 控制table的state
     state: {
       columnVisibility,
@@ -57,6 +63,7 @@ function Table() {
       faker.helpers.shuffle(table.getAllLeafColumns().map((d) => d.id))
     );
   };
+
   console.log(columnVisibility);
   console.log(columnOrder);
   console.log(Sorting);
@@ -64,53 +71,21 @@ function Table() {
   return (
     <div>
       <Link to="/v7">v7</Link>
-      <div
-        className="columnsVisible"
-        style={{ border: "1px solid", width: "120px" }}
-      >
-        <div>
-          <label>
-            <input
-              {...{
-                style: { float: "left" },
-                type: "checkbox",
-                // 使所有columns的資料都可見or都不可見
-                checked: table.getIsAllColumnsVisible(),
-                onChange: table.getToggleAllColumnsVisibilityHandler(),
-              }}
-            />{" "}
-            Toggle All
-          </label>
-          <hr />
-        </div>
-        {table.getAllLeafColumns().map((column) => {
-          return (
-            <div key={column.id}>
-              <label>
-                <input
-                  {...{
-                    style: { float: "left" },
-                    type: "checkbox",
-                    checked: column.getIsVisible(),
-                    onChange: column.getToggleVisibilityHandler(),
-                  }}
-                />{" "}
-                {column.id}
-              </label>
-            </div>
-          );
-        })}
-      </div>
+      <ShowColumns table={table} />
       <div>
         <button onClick={() => rerender()}>New data</button>
         <button onClick={() => randomizeColumns()}>Shuffle Columns</button>
       </div>
-      <table>
+      <table style={{width: table.getCenterTotalSize()}}>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id} colSpan={header.colSpan}>
+                <th
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  style={{ width: header.getSize() }}
+                >
                   {header.isPlaceholder ? null : (
                     <div>
                       <div
@@ -135,6 +110,15 @@ function Table() {
                           <Filter column={header.column} table={table} />
                         </div>
                       ) : null}
+                  <div
+                    {...{
+                      onMouseDown: header.getResizeHandler(),
+                      onTouchStart: header.getResizeHandler(),
+                      className: `resizer ${
+                        header.column.getIsResizing() ? 'isResizing' : ''
+                      }`
+                    }}
+                  />
                     </div>
                   )}
                 </th>
@@ -197,7 +181,8 @@ function Table() {
           {">>"}
         </button>
         <span>
-          <div>Page
+          <div>
+            Page
             <strong>
               {table.getState().pagination.pageIndex + 1} of{" "}
               {table.getPageCount()}
