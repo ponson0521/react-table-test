@@ -2,7 +2,10 @@ import { Table } from "@tanstack/react-table";
 
 function ShowColumns({ table }: { table: Table<any> }) {
   return (
-    <div className="columnsVisible" style={{ border: "1px solid" }}>
+    <div
+      className="columnsVisible"
+      style={{ border: "1px solid", width: "120px" }}
+    >
       <div>
         <label>
           <input

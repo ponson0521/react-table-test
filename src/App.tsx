@@ -1,5 +1,5 @@
 import "./App.css";
-import Table from "./Table/Table";
+import Table from "./TableV8/Index";
 import TableV7 from "./TableV7/TableV7";
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 

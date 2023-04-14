@@ -8,7 +8,12 @@ function SidebarHeader() {
     <MenuItem
       icon={collapsed ? <ArrowForward /> : <ArrowBack />}
       onClick={() => collapseSidebar()}
-      style={{ margin: "16px 0", fontSize: "24px", fontWeight: 800 }}
+      style={{
+        margin: "16px 0",
+        fontSize: "18px",
+        fontWeight: 800,
+        color: "white",
+      }}
     >
       ProSidebar
     </MenuItem>

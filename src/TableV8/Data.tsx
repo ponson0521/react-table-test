@@ -8,7 +8,6 @@ export type Person = {
   lastName: string;
   age: number;
   visits: number;
-  progress: number;
   status: "relationship" | "complicated" | "single";
   subRows?: Person[];
 };
@@ -23,7 +22,6 @@ const newPerson = (): Person => {
       max: 50,
     }),
     visits: faker.datatype.number(1000),
-    progress: faker.datatype.number(100),
     status: faker.helpers.shuffle<Person["status"]>([
       "relationship",
       "complicated",
@@ -118,10 +116,6 @@ export const defaultColumns = [
           }),
           columnHelper.accessor("status", {
             header: "Status",
-            footer: (props) => props.column.id,
-          }),
-          columnHelper.accessor("progress", {
-            header: "Profile Progress",
             footer: (props) => props.column.id,
           }),
         ],
