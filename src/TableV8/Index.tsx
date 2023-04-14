@@ -14,7 +14,7 @@ import Table from "./Table";
 import Page from "./Page";
 import Filter from "./Filter";
 import ShowColumns from "./ShowColumns"; // 顯示/隱藏columns的component
-import ProSidebar from "../Sidebar/Sidebar/ProSidebar"; // sidebar
+import ProSidebar from "../Sidebar/ProSidebar"; // sidebar
 import "./Index.css";
 
 function Index() {

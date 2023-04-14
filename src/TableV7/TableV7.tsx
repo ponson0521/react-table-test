@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { useTable, Column } from "react-table";
-import ProSidebar from "../Sidebar/Sidebar/ProSidebar";
+import ProSidebar from "../Sidebar/ProSidebar";
 
 function TableV7() {
   interface Data {
