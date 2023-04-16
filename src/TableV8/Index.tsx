@@ -9,7 +9,6 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { defaultColumns, makeData } from "./Data"; // 匯入columns、data type、data等table資料
-import { faker } from "@faker-js/faker";
 import Table from "./Table";
 import Page from "./Page";
 import ShowColumns from "./ShowColumns"; // 顯示/隱藏columns的component
@@ -53,14 +52,7 @@ function Index() {
     // enableRowSelection: row => row.original.age > 18,    // or enable row selection conditionally per row
   });
 
-  // 洗亂columns的順序(使用faker package的shuffle功能)
-  const randomizeColumns = () => {
-    table.setColumnOrder(
-      faker.helpers.shuffle(table.getAllLeafColumns().map((d) => d.id))
-    );
-  };
-
-  // console.log(table.getHeaderGroups()[0].headers[1]);
+  // console.log(columnVisibility);
 
   return (
     <div style={{ display: "flex" }}>
@@ -69,12 +61,10 @@ function Index() {
         <div>
           <Filter table={table} />
           <Table table={table} />
-          <Page table={table} />
-        </div>
-        <div>
-          <ShowColumns table={table} />
-          <button onClick={() => rerender()}>New data</button>
-          <button onClick={() => randomizeColumns()}>Shuffle Columns</button>
+          <div style={{ display: "flex" }}>
+            <Page table={table} />
+            <button onClick={() => rerender()}>New data</button>
+          </div>
         </div>
       </div>
     </div>

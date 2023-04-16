@@ -22,7 +22,7 @@ function ProSidebar() {
         rootStyles={{
           [`.${sidebarClasses.container}`]: {
             backgroundColor: "#14143A",
-            height: "100%",
+            height: "100vh",
           },
         }}
       >
