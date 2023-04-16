@@ -12,9 +12,9 @@ import { defaultColumns, makeData } from "./Data"; // 匯入columns、data type�
 import { faker } from "@faker-js/faker";
 import Table from "./Table";
 import Page from "./Page";
-import Filter from "./Filter";
 import ShowColumns from "./ShowColumns"; // 顯示/隱藏columns的component
 import ProSidebar from "../Sidebar/ProSidebar"; // sidebar
+import Filter from "./Filter";
 import "./Index.css";
 
 function Index() {
@@ -60,13 +60,14 @@ function Index() {
     );
   };
 
-  // console.log(table.getHeaderGroups()[2].headers);
+  // console.log(table.getHeaderGroups()[0].headers[1]);
 
   return (
     <div style={{ display: "flex" }}>
       <ProSidebar />
       <div style={{ display: "flex" }}>
         <div>
+          <Filter table={table} />
           <Table table={table} />
           <Page table={table} />
         </div>

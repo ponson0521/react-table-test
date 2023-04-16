@@ -4,29 +4,25 @@ import IndeterminateCheckbox from "./IndeterminateCheckbox";
 
 // Data type
 export type Person = {
+  id: string;
   firstName: string;
-  lastName: string;
   age: number;
   visits: number;
-  status: "relationship" | "complicated" | "single";
+  status: "known" | "unknown";
   subRows?: Person[];
 };
 
 // 使用faker來生成假資料
 const newPerson = (): Person => {
   return {
+    id: faker.datatype.uuid(),
     firstName: faker.name.firstName(),
-    lastName: faker.name.lastName(),
     age: faker.datatype.number({
       min: 18,
       max: 50,
     }),
     visits: faker.datatype.number(1000),
-    status: faker.helpers.shuffle<Person["status"]>([
-      "relationship",
-      "complicated",
-      "single",
-    ])[0]!,
+    status: faker.helpers.shuffle<Person["status"]>(["known", "unknown"])[0]!,
   };
 };
 
@@ -53,7 +49,7 @@ export function makeData(...lens: number[]) {
   return makeDataLevel();
 }
 
-// Columns 
+// Columns
 const columnHelper = createColumnHelper<Person>();
 export const defaultColumns = [
   columnHelper.display({
@@ -68,7 +64,7 @@ export const defaultColumns = [
       />
     ),
     cell: ({ row }) => (
-      <div className="px-1">
+      <div>
         <IndeterminateCheckbox
           {...{
             checked: row.getIsSelected(),
@@ -82,19 +78,19 @@ export const defaultColumns = [
   }),
   // .group()，Grouping Column，no sort、filter
   columnHelper.group({
-    id: "Name",
-    header: "Name",
+    id: "Identity",
+    header: "Identity",
     footer: (props) => props.column.id,
     columns: [
       // .accessor()，Accessor Column，can sort、filter、group
-      columnHelper.accessor("firstName", {
+      columnHelper.accessor("id", {
         cell: (prop) => prop.getValue(),
         footer: (prop) => prop.column.id,
       }),
-      columnHelper.accessor((row) => row.lastName, {
-        id: "lastName",
+      columnHelper.accessor((row) => row.firstName, {
+        id: "firstName",
         cell: (prop) => prop.getValue(),
-        header: () => <span>Last Name</span>,
+        header: () => <span>Name</span>,
         footer: (props) => props.column.id,
       }),
     ],
@@ -107,18 +103,13 @@ export const defaultColumns = [
         header: () => "Age",
         footer: (props) => props.column.id,
       }),
-      columnHelper.group({
-        header: "More Info",
-        columns: [
-          columnHelper.accessor("visits", {
-            header: () => <span>Visits</span>,
-            footer: (props) => props.column.id,
-          }),
-          columnHelper.accessor("status", {
-            header: "Status",
-            footer: (props) => props.column.id,
-          }),
-        ],
+      columnHelper.accessor("visits", {
+        header: () => <span>Visits</span>,
+        footer: (props) => props.column.id,
+      }),
+      columnHelper.accessor("status", {
+        header: "Status",
+        footer: (props) => props.column.id,
       }),
     ],
   }),

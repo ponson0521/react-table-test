@@ -13,7 +13,6 @@ import StorageIcon from "@mui/icons-material/Storage";
 // acesse https://react-svgr.com/playground/ para converter imagem svg em componente tsx
 import SidebarHeader from "./SidebarHeader";
 import { Link } from "react-router-dom";
-import { hover } from "@testing-library/user-event/dist/hover";
 
 function ProSidebar() {
   return (
@@ -23,7 +22,7 @@ function ProSidebar() {
         rootStyles={{
           [`.${sidebarClasses.container}`]: {
             backgroundColor: "#14143A",
-            height: "100vh",
+            height: "100%",
           },
         }}
       >
