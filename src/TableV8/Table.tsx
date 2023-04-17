@@ -1,6 +1,7 @@
 import { Table as t, flexRender } from "@tanstack/react-table";
 import Filter from "./Filter"; // 篩選row的component
 
+// TypeScript解構賦值，({參數}: {參數名: type})
 function Table({ table }: { table: t<any> }) {
   return (
     <table>

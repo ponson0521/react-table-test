@@ -14,6 +14,7 @@ function Filter({ table }: { table: t<any> }) {
     <div>
       {columnId === null ? null : (
         <input
+          className="filterinput"
           type="text"
           value={(columnId.getFilterValue() ?? "") as string}
           onChange={(e) => columnId.setFilterValue(e.target.value)}
@@ -22,6 +23,7 @@ function Filter({ table }: { table: t<any> }) {
       )}
       {columnName === null ? null : (
         <input
+          className="filterinput"
           type="text"
           value={(columnName.getFilterValue() ?? "") as string}
           onChange={(e) => columnName.setFilterValue(e.target.value)}
@@ -30,6 +32,7 @@ function Filter({ table }: { table: t<any> }) {
       )}
       {columnAge === null ? null : (
         <input
+          className="filterinput"
           type="number"
           value={((columnAge.getFilterValue() as any)?.[0] ?? "") as string}
           min={0}
@@ -41,6 +44,7 @@ function Filter({ table }: { table: t<any> }) {
       )}
       {columnStatus === null ? null : (
         <select
+          className="filterinput"
           value={columnStatus.getFilterValue() as Person["status"]}
           onChange={(e) => columnStatus.setFilterValue(e.target.value)}
         >

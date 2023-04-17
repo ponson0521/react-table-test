@@ -58,12 +58,21 @@ function Index() {
     <div style={{ display: "flex" }}>
       <ProSidebar />
       <div style={{ display: "flex" }}>
-        <div>
-          <Filter table={table} />
-          <Table table={table} />
-          <div style={{ display: "flex" }}>
+        <div className="content">
+          <div className="title">
+            <h1>Table</h1>
+          </div>
+          <div className="filter">
+            <Filter table={table} />
+          </div>
+          <div className="table">
+            <Table table={table} />
+          </div>
+          <div className="page">
             <Page table={table} />
-            <button onClick={() => rerender()}>New data</button>
+            <div>
+              <button onClick={() => rerender()}>New data</button>
+            </div>
           </div>
         </div>
       </div>

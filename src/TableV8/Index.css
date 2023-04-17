@@ -26,3 +26,15 @@
     cursor: pointer;
   }
   
+  .content {
+    padding-left: 10px;
+  }
+  .filter {
+    margin-bottom: 10px;
+  }
+  .filterinput {
+    margin: 5px;
+  }
+  .page {
+    display: flex;
+  }
