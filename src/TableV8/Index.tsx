@@ -52,7 +52,7 @@ function Index() {
     // enableRowSelection: row => row.original.age > 18,    // or enable row selection conditionally per row
   });
 
-  // console.log(columnVisibility);
+  console.log(rowSelection);
 
   return (
     <div style={{ display: "flex" }}>

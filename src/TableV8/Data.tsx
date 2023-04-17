@@ -8,7 +8,7 @@ export type Person = {
   firstName: string;
   age: number;
   visits: number;
-  status: "known" | "unknown";
+  status: "colleague" | "unknown";
   subRows?: Person[];
 };
 
@@ -22,7 +22,7 @@ const newPerson = (): Person => {
       max: 50,
     }),
     visits: faker.datatype.number(1000),
-    status: faker.helpers.shuffle<Person["status"]>(["known", "unknown"])[0]!,
+    status: faker.helpers.shuffle<Person["status"]>(["colleague", "unknown"])[0]!,
   };
 };
 

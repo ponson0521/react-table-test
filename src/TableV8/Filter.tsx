@@ -8,7 +8,7 @@ function Filter({ table }: { table: t<any> }) {
   const columnAge = table.getAllLeafColumns()[3] ?? null;
   const columnStatus = table.getAllLeafColumns()[5] ?? null;
 
-  // console.log(table.getAllLeafColumns());
+  // console.log(columnStatus.getFilterValue());
 
   return (
     <div>
@@ -45,7 +45,7 @@ function Filter({ table }: { table: t<any> }) {
           onChange={(e) => columnStatus.setFilterValue(e.target.value)}
         >
           <option value="">Search Status</option>
-          <option value="known">known</option>
+          <option value="colleague">colleague</option>
           <option value="unknown">unknown</option>
         </select>
       )}
